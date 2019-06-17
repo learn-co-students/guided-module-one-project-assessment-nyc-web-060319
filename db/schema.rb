@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_17_184232) do
+ActiveRecord::Schema.define(version: 2019_06_17_200157) do
 
   create_table "artists", force: :cascade do |t|
     t.string "name"
     t.string "genre"
+    t.integer "user_id"
   end
 
   create_table "concerts", force: :cascade do |t|
@@ -23,6 +24,12 @@ ActiveRecord::Schema.define(version: 2019_06_17_184232) do
     t.date "date"
     t.decimal "min_price", precision: 10, scale: 2
     t.decimal "max_price", precision: 10, scale: 2
+    t.integer "user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "password"
   end
 
   create_table "venues", force: :cascade do |t|
@@ -30,6 +37,7 @@ ActiveRecord::Schema.define(version: 2019_06_17_184232) do
     t.string "address"
     t.string "city"
     t.string "state"
+    t.integer "user_id"
   end
 
 end
