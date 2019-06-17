@@ -10,5 +10,5 @@ require_all 'lib'
 
 if ENV["ACTIVE_RECORD_ENV"] == "test"
     ActiveRecord::Migration.verbose = false
-  end
+end
   
