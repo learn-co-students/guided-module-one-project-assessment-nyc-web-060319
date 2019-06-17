@@ -15,8 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 ENV["CHATBOT_ENV"] = "test"
-
-require_relative '../config/environment'
+require File.expand_path("../../config/environment", __FILE__)
 
 
 
@@ -27,7 +26,7 @@ RSpec.configure do |config|
   # assertions if you prefer.
   config.warnings = true
   config.order = 'default'
-
+  config.use_transactional_tests = false
   `rake db:migrate`
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
