@@ -1,3 +1,5 @@
+# seeded database initially, commented out so as not to repeat entries
+
 # 10.times do
 #   Artist.create(name: Faker::Music.band, genre: Faker::Music.genre)
 # end
