@@ -6,6 +6,7 @@ class Learner
     include Interactor
     def talk_to_user
         puts "Question text:"
+        # Rake brakes bare gets, must explicitly use STDIN.gets
         question = STDIN.gets.chomp
         puts "Response text:"
         response = STDIN.gets.chomp

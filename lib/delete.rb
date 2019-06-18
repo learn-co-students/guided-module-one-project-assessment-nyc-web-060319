@@ -4,6 +4,7 @@ class Deleter
     include Interactor
     def talk_to_user
         puts "what question do you want to remove from the database?"
+        # Rake brakes bare gets, must explicitly use STDIN.gets
         question_input = STDIN.gets.chomp
         question = Question.find_by(:question => question_input)
         if question == nil

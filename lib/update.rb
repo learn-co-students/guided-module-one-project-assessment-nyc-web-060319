@@ -4,6 +4,7 @@ class Updater
     include Interactor
     def talk_to_user
         puts "what question do you want to update the answer for?"
+        # Rake brakes bare gets, must explicitly use STDIN.gets
         question_to_update_user_entry = STDIN.gets.chomp.downcase
         question = Question.find_by(:question => question_to_update_user_entry)
         if question == nil

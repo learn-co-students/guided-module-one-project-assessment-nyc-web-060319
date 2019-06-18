@@ -6,6 +6,7 @@ class Speaker
 
     def talk_to_user
         puts "\nWhat say you?"
+        # Rake brakes bare gets, must explicitly use STDIN.gets
         user_text = STDIN.gets.chomp.downcase
         # binding.pry
         user_q = Question.find_or_create_by(question: user_text)
