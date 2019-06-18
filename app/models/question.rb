@@ -4,9 +4,13 @@ class Question < ActiveRecord::Base
 
     def response
         # binding.pry
-        found_qa = self.question_answers.find_by(:question => self)
+        found_qa = QuestionAnswer.find_by(question_id: self.id)
+        if found_qa == nil
+            binding.pry
+            return "Oh, that's neat."
+        end
         ans = Answer.find_by(id: found_qa.answer_id)
-        ans
+        ans.response
     end
 
 end

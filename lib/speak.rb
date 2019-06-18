@@ -3,15 +3,11 @@ require_relative "../config/environment"
 class Speak
 
     def talk_to_user
-        puts "What say you?"
+        puts "\nWhat say you?"
         user_text = STDIN.gets.chomp.downcase
         user_q = Question.find_or_create_by(question: user_text)
         answer = user_q.response
-        if answer != nil
-            puts answer.answer
-        else
-            puts "Go on..."
-        end
+        puts answer
     end
 
     def speak_loop
