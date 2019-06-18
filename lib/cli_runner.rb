@@ -1,4 +1,5 @@
 require_relative "learn_interactor_class.rb"
+require_relative "speak.rb"
 
 def instructions
     puts "Hello! welcome to the chatbot!"
@@ -36,11 +37,12 @@ class Runner
 
     def learner
         learn = Learner.new
-        learn.learn_run
+        learn.run
     end
 
     def speaker
-
+        speak = Speak.new
+        speak.run
     end
 
     def dispatch(command)

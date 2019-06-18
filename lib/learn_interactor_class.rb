@@ -20,7 +20,7 @@ class Learner
         end
     end
 
-    def learn_run
+    def run
         begin
             puts "Beginning learn mode..."
             puts "control + c to exit."
