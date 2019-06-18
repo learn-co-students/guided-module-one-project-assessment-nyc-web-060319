@@ -6,7 +6,7 @@ class Speak
         puts "What say you?"
         user_text = STDIN.gets.chomp.downcase
         user_q = Question.find_or_create_by(question: user_text)
-        answer = user_q.response(user_text)
+        answer = user_q.response
         if answer != nil
             puts answer.answer
         else
