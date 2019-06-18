@@ -4,7 +4,7 @@ require_relative '../lib/cli_runner.rb'
 
 def main
     runner = Runner.new
-    runner.run(true)
+    runner.run()
 end
 
 # main

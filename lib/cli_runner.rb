@@ -7,10 +7,12 @@ def instructions
     puts "\t(l)earn"
     puts "\t(s)peak"
     puts "\t(q)uit"
+    puts "\t(u)pdate"
+    puts "\t(d)elete"
 end
 
 class Runner
-    COMMANDS_SHORT = {learn: "l", speak: "s", quit: "q"}
+    COMMANDS_SHORT = {learn: "l", speak: "s", quit: "q", update: "u", delete: "d"}
  
     def validate(response)
         # binding.pry
@@ -29,6 +31,10 @@ class Runner
             return :learn
         elsif response.start_with?(COMMANDS_SHORT[:speak])
             return :speak
+        elsif response.start_with?(COMMANDS_SHORT[:update])
+            return :update
+        elsif response.start_with?(COMMANDS_SHORT[:delete])
+            return :delete
         elsif response.start_with?(COMMANDS_SHORT[:quit])
             puts "buh bye!"
             exit
@@ -41,8 +47,18 @@ class Runner
     end
 
     def speaker
-        speak = Speak.new
+        speak = Speaker.new
         speak.run
+    end
+    
+    def updater
+        update = Updater.new
+        update.run
+    end
+
+    def deleter
+        delete = Deleter.new
+        delete.run
     end
 
     def dispatch(command)
@@ -51,11 +67,18 @@ class Runner
             learner
         elsif command == :speak
             speaker
+        elsif command == :update
+            updater
+        elsif command == :delete
+            deleter
+        else
+            # shouldn't reach
+            abort
         end
     end
 
 
-    def run(start = false)
+    def run()
         while(true) do
             instruction = query_user
             dispatch(instruction)
