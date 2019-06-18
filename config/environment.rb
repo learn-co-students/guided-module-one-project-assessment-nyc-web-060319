@@ -8,7 +8,7 @@ Dir[File.join(File.dirname(__FILE__), "../lib/support", "*.rb")].each {|f| requi
 DBRegistry[ENV["CHATBOT_ENV"]].connect!
 DB = ActiveRecord::Base.connection
 
-# ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
+# ActiveRecord::Base.establish_connection(adapter: 'sqlfite3', database: 'db/development.db')
 require_all 'lib'
 
 if ENV["ACTIVE_RECORD_ENV"] == "test"
