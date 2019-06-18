@@ -1,5 +1,5 @@
 # NOT named learn.rb because of the learn.co suite!
-require_relative "../config/environment"
+# require_relative "../config/environment"
 
 class Learner
 
@@ -10,7 +10,7 @@ class Learner
         response = STDIN.gets.chomp
         new_question = Question.find_or_create_by(:question => question)
         new_answer = Answer.find_or_create_by(:answer=> response)
-        qa = QuestionAnswer.find_or_create_by(:answer=> new_answer, :question => new_question)
+        QuestionAnswer.find_or_create_by(:answer=> new_answer, :question => new_question)
         binding.pry
     end
 
@@ -25,7 +25,7 @@ class Learner
             puts "Beginning learn mode..."
             puts "control + c to exit."
             learn_loop
-        rescue Interrupt => e
+        rescue Interrupt => _
             puts "ok, done with learn mode."
             return
         end

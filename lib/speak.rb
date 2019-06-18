@@ -1,16 +1,16 @@
-require_relative "../config/environment"
+# require_relative "../config/environment"
 
 class Speak
 
     def talk_to_user
-        puts "What say you?"
+        puts "\nWhat say you?"
         user_text = STDIN.gets.chomp.downcase
         user_q = Question.find_or_create_by(question: user_text)
         answer = user_q.response
         if answer != nil
             puts answer.answer
         else
-            puts "Go on..."
+            puts "Go on...\n"
         end
     end
 
@@ -25,7 +25,7 @@ class Speak
             puts "Beginning speak mode..."
             puts "control + c to exit."
             speak_loop
-        rescue Interrupt => e
+        rescue Interrupt => _
             puts "ok, done with speak mode."
             return
         end

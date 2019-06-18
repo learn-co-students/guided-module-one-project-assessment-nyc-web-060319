@@ -5,7 +5,11 @@ class Question < ActiveRecord::Base
     def response
         # binding.pry
         found_qa = self.question_answers.find_by(:question => self)
-        ans = Answer.find_by(id: found_qa.answer_id)
+        if found_qa == nil
+            ans = nil
+        else
+            ans = Answer.find_by(id: found_qa.answer_id)
+        end
         ans
     end
 
