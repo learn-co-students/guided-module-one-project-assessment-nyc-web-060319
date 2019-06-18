@@ -3,7 +3,7 @@ class Question < ActiveRecord::Base
     has_many :answers, through: :question_answers
 
     def response
-        binding.pry
+        # binding.pry
         found_qa = self.question_answers.find_by(:question => self)
         ans = Answer.find_by(id: found_qa.answer_id)
         ans
