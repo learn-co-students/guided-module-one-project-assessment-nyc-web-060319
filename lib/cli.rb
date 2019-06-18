@@ -1,4 +1,6 @@
 class CommandLineInterface
+  attr_accessor :current_user
+
   def greet
     "Hello, welcome to your friendly concert viewer"
   end
@@ -30,6 +32,7 @@ class CommandLineInterface
       login_to_account
     else
       puts "Welcome #{username}."
+      @current_user = user
       show_options
     end
   end
@@ -49,25 +52,15 @@ class CommandLineInterface
 
   def show_options
     # puts "1. Find artists."
-    # puts "2. Create an artist."
     # puts "3. Find venues."
-    # puts "4. Create a venue."
-    puts "5. Find concerts."
-    # puts "6. Create a concert."
+    puts "1. Find new concerts to add to your personal list."
+    puts "2. Show the concerts in your list."
     input = gets.chomp
     case input
-    # when "1"
-    #   find_artist
-    # when "2"
-    #   create_artist
-    # when "3"
-    #   find_venue
-    # when "4"
-    #   create_venue
-    when "5"
+    when "1"
       find_concert
-      # when "6"
-      #   create_concert
+    when "2"
+      list_concerts
     end
   end
 
@@ -79,7 +72,19 @@ class CommandLineInterface
     puts "3. Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
     concert_artist = gets.chomp
     puts "\nHere are your concerts:\n"
-    Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist).each do |concert|
+    concert_list = Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist)
+    concert_list.each_with_index do |concert, i|
+      puts "#{i + 1}: #{concert.to_string}"
+      puts ""
+    end
+    puts "Enter the number of the concert you would like to add to your list"
+    num = gets.chomp.to_i
+    UserConcert.create(user_id: @current_user.id, concert_id: concert_list[num - 1].id)
+  end
+
+  def list_concerts
+    puts ""
+    @current_user.concerts.each do |concert|
       puts concert.to_string
       puts ""
     end

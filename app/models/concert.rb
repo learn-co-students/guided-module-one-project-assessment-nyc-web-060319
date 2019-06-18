@@ -1,7 +1,8 @@
 class Concert < ActiveRecord::Base
   belongs_to :artist
   belongs_to :venue
-  belongs_to :user
+  has_many :user_concerts
+  has_many :users, through: :user_concerts
 
   def self.our_select(date: date_string, city: city_string, artist: artist_string)
     if date != ""
@@ -37,6 +38,10 @@ class Concert < ActiveRecord::Base
   end
 
   def to_string
-    "Artist: #{artist.name}\nCity: #{venue.city}\nDate: #{date}\nMinimum Ticket Price: #{min_price}\nMaximum Ticket Price: #{max_price}"
+    if min_price != nil
+      "Artist: #{artist.name}\nVenue Name: #{venue.name}\nCity: #{venue.city}\nDate: #{date}\nMinimum Ticket Price: #{min_price}\nMaximum Ticket Price: #{max_price}"
+    else
+      "Artist: #{artist.name}\nVenue Name: #{venue.name}\nCity: #{venue.city}\nDate: #{date}"
+    end
   end
 end
