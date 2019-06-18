@@ -1,3 +1,7 @@
+require "dotenv"
+Dotenv.load("api_key.env")
+api_key = ENV["API_KEY"]
+
 # seeded database initially, commented out so as not to repeat entries
 
 # 10.times do
@@ -15,19 +19,25 @@
 #   Concert.create(artist_id: Artist.all.sample.id, venue_id: Venue.all.sample.id, date: Faker::Date.forward(100), min_price: min_price, max_price: max_price)
 # end
 
-master_u = User.find_by(username: "AE")
+# set the user of all initial seed data to master user
 
-Artist.all.each do |artist|
-  artist.user = master_u
-  artist.save
-end
+# master_u = User.find_by(username: "AE")
 
-Concert.all.each do |concert|
-  concert.user = master_u
-  concert.save
-end
+# Artist.all.each do |artist|
+#   artist.user = master_u
+#   artist.save
+# end
 
-Venue.all.each do |venue|
-  venue.user = master_u
-  venue.save
-end
+# Concert.all.each do |concert|
+#   concert.user = master_u
+#   concert.save
+# end
+
+# Venue.all.each do |venue|
+#   venue.user = master_u
+#   venue.save
+# end
+
+# User.find_or_create_by(username: "AE", password: "masterpass")
+
+require_relative "../db/scrape_api.rb"

@@ -78,9 +78,7 @@ class CommandLineInterface
     concert_city = gets.chomp
     puts "3. Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
     concert_artist = gets.chomp
-    puts "\n"
-    puts "Here are your concerts:"
-    puts "\n"
+    puts "\nHere are your concerts:\n"
     Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist).each do |concert|
       puts concert.to_string
       puts ""
