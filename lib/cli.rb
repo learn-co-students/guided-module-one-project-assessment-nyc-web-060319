@@ -30,6 +30,7 @@ class CommandLineInterface
       login_to_account
     else
       puts "Welcome #{username}."
+      show_options
     end
   end
 
@@ -46,14 +47,43 @@ class CommandLineInterface
     end
   end
 
-  #   def show_options
-  #     puts "1. Find or create a venue."
-  #     puts "2. Find or create an artist."
-  #     puts "3. Find or create a concert."
-  #   end
+  def show_options
+    # puts "1. Find artists."
+    # puts "2. Create an artist."
+    # puts "3. Find venues."
+    # puts "4. Create a venue."
+    puts "5. Find concerts."
+    # puts "6. Create a concert."
+    input = gets.chomp
+    case input
+    # when "1"
+    #   find_artist
+    # when "2"
+    #   create_artist
+    # when "3"
+    #   find_venue
+    # when "4"
+    #   create_venue
+    when "5"
+      find_concert
+      # when "6"
+      #   create_concert
+    end
+  end
 
-  #   def venue_selected
-  #     puts "Enter the name of a venue that you would like to find or create."
-  #   end
-
+  def find_concert
+    puts "1. Enter a date (mm/dd/yy) for your concerts (or leave blank to search for concerts on all dates)."
+    concert_date = gets.chomp
+    puts "2. Enter a city for your concerts (or leave blank to search for concerts in all cities)."
+    concert_city = gets.chomp
+    puts "3. Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
+    concert_artist = gets.chomp
+    puts "\n"
+    puts "Here are your concerts:"
+    puts "\n"
+    Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist).each do |concert|
+      puts concert.to_string
+      puts ""
+    end
+  end
 end
