@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_17_204050) do
+ActiveRecord::Schema.define(version: 2019_06_18_161304) do
 
   create_table "answers", force: :cascade do |t|
     t.string "answer"
   end
 
-  create_table "question_answer", force: :cascade do |t|
+  create_table "question_answers", force: :cascade do |t|
     t.integer "question_id"
     t.integer "answer_id"
   end

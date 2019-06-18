@@ -8,8 +8,9 @@ class Learner
         question = STDIN.gets.chomp
         puts "Response text:"
         response = STDIN.gets.chomp
-        new_question = Question.new(:question => question)
-        new_answer = Answer.new(:answer=> response)
+        new_question = Question.find_or_create_by(:question => question)
+        new_answer = Answer.find_or_create_by(:answer=> response)
+        qa = QuestionAnswer.find_or_create_by(:answer=> new_answer, :question => new_question)
         binding.pry
     end
 
