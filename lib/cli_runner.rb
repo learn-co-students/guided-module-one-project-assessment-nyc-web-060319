@@ -35,7 +35,8 @@ class Runner
     end
 
     def learner
-
+        learn = Learner.new
+        learn.learn_run
     end
 
     def speaker
@@ -43,15 +44,19 @@ class Runner
     end
 
     def dispatch(command)
+        # binding.pry
         if command == :learn
             learner
-        elsif
+        elsif command == :speak
             speaker
         end
     end
 
 
     def run(start = false)
-        instruction = query_user
+        while(true) do
+            instruction = query_user
+            dispatch(instruction)
+        end
     end
 end
