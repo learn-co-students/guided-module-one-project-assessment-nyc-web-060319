@@ -17,8 +17,3 @@ task :run_main do
   main
 end
 
-desc 'seed'
-task :seed do
-  ActiveRecord::Base.logger = Logger.new(STDOUT)
-  require_relative "db/seeds.rb"
-end
