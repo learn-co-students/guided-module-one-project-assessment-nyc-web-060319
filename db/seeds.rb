@@ -19,11 +19,31 @@ Q_STRINGS = [
     "what's up",
     "why",
     "bad",
-    "what's your name"
+    "what's your name",#all after this point
+    "whats your favorite color?",
+    "What happens when an elephant sees a kanagroo?",
+    "When teachers are goen do we A) Burn the building? B) Burn the building? C) Burning the building?",
+    "Red or blue you choose",
+    "Seed data for a seed"
+]
+
+A_STRINGS = [
+	"Yes",
+	"Sounds like a great idea",
+	"I am great thanks",
+	"Nothing much what are you up to",
+	"call 732-789-1728",
+	"Really is this the best we can do?",
+	"Good evening thank you for calling flatiron how may I direct your call today?",
+	"Burn the building",
+	"We are all happy people",
+	"The red pill was a mistake he should have taken the blue....",
+	"I feel like chicken tonight, like chicken tonight",
+	"Another thing to do when done"
 ]
 
 8.times do |i|
     q = Question.find_or_create_by(:question => Q_STRINGS[i])
-    a = Answer.find_or_create_by(:answer => "`#{Q_STRINGS[i]}`? Ok, go on...")
+    a = Answer.find_or_create_by(:answer => "`#{A_STRINGS[i]}`? Ok, go on...")
     QuestionAnswer.find_or_create_by(:answer => a, :question => q)
 end
