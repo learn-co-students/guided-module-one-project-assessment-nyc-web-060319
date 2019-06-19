@@ -40,4 +40,6 @@ api_key = ENV["API_KEY"]
 
 # User.find_or_create_by(username: "AE", password: "masterpass")
 
-require_relative "../db/scrape_api.rb"
+# require_relative "../db/scrape_api.rb"
+
+# require_relative "fix_venue_duplicates.rb"

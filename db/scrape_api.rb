@@ -9,7 +9,6 @@ def make_artist_hash(attractions_hash)
   new_hash = {}
   new_hash[:name] = attractions_hash["name"]
   new_hash[:genre] = attractions_hash["classifications"][0]["subGenre"]["name"]
-  new_hash[:user_id] = 1
   new_hash
 end
 
@@ -19,13 +18,23 @@ def make_venue_hash(raw_venue_hash)
   new_hash[:address] = raw_venue_hash["address"]["line1"]
   new_hash[:city] = raw_venue_hash["city"]["name"]
   new_hash[:state] = raw_venue_hash["state"]["stateCode"]
-  new_hash[:user_id] = 1
   new_hash
 end
 
 url_1 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&apikey=#{api_key}"
 url_2 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=4&apikey=#{api_key}"
-url = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=8&apikey=#{api_key}"
+url_3 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=8&apikey=#{api_key}"
+url_4 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=12&apikey=#{api_key}"
+url_5 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=16&apikey=#{api_key}"
+url_6 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=20&apikey=#{api_key}"
+url_7 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=24&apikey=#{api_key}"
+url_8 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=28&apikey=#{api_key}"
+url_9 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=32&apikey=#{api_key}"
+url_10 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=36&apikey=#{api_key}"
+url_11 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=40&apikey=#{api_key}"
+url_12 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=44&apikey=#{api_key}"
+url_13 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=48&apikey=#{api_key}"
+
 4.times do
   response_string = RestClient.get(url)
   response_hash = JSON.parse(response_string)
@@ -45,9 +54,7 @@ url = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=
 
     concert_hash[:artist_id] = new_artist.id
     concert_hash[:venue_id] = new_venue.id
-    concert_hash[:user_id] = 1
     Concert.find_or_create_by(concert_hash)
   end
   url = "https://app.ticketmaster.com#{response_hash["_links"]["next"]["href"]}&apikey=#{api_key}"
-  puts url
 end

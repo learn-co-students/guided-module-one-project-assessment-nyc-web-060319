@@ -61,6 +61,10 @@ class CommandLineInterface
       find_concert
     when "2"
       list_concerts
+    else
+      puts "Invalid input, please try again."
+      puts ""
+      show_options
     end
   end
 
@@ -73,6 +77,10 @@ class CommandLineInterface
     concert_artist = gets.chomp
     puts "\nHere are your concerts:\n"
     concert_list = Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist)
+    if concert_list.empty?
+      empty_return
+      return
+    end
     concert_list.each_with_index do |concert, i|
       puts "#{i + 1}: #{concert.to_string}"
       puts ""
@@ -80,6 +88,13 @@ class CommandLineInterface
     puts "Enter the number of the concert you would like to add to your list"
     num = gets.chomp.to_i
     UserConcert.create(user_id: @current_user.id, concert_id: concert_list[num - 1].id)
+    puts "\n Would you like to view your list of concerts?"
+    puts "1. View list."
+    puts "2. Exit."
+    input = gets.chomp
+    if input == "1"
+      list_concerts
+    end
   end
 
   def list_concerts
@@ -87,6 +102,22 @@ class CommandLineInterface
     @current_user.concerts.each do |concert|
       puts concert.to_string
       puts ""
+    end
+  end
+
+  def empty_return
+    puts "Your search did not match any concerts in the database. Try again?"
+    puts "1. Restart search."
+    puts "2. Return to main menu"
+    input = gets.chomp
+    case input
+    when "1"
+      find_concert
+    when "2"
+      show_options
+    else
+      puts "Invalid input."
+      empty_return
     end
   end
 end
