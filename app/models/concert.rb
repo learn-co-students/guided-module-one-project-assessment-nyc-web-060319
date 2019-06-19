@@ -8,28 +8,28 @@ class Concert < ActiveRecord::Base
     if date != ""
       date = Date.strptime(date, "%m/%d/%y")
       if city != "" && artist != ""
-        artist_id = Artist.where(name: artist).map(&:id)
-        venue_ids = Venue.where(city: city).map(&:id)
+        artist_id = Artist.where("lower(name) = ?", artist.downcase).map(&:id)
+        venue_ids = Venue.where("lower(city) = ?", city.downcase).map(&:id)
         return Concert.where(date: date, venue_id: venue_ids, artist: artist_id)
       elsif artist != ""
-        artist_id = Artist.where(name: artist).map(&:id)
+        artist_id = Artist.where("lower(name) = ?", artist.downcase).map(&:id)
         return Concert.where(date: date, artist_id: artist_id)
       elsif city != ""
-        venue_ids = Venue.where(city: city).map(&:id)
+        venue_ids = Venue.where("lower(city) = ?", city.downcase).map(&:id)
         return Concert.where(date: date, venue_id: venue_ids)
       else
         return Concert.where(date: date)
       end
     else
       if city != "" && artist != ""
-        artist_id = Artist.where(name: artist).map(&:id)
-        venue_ids = Venue.where(city: city).map(&:id)
+        artist_id = Artist.where("lower(name) = ?", artist.downcase).map(&:id)
+        venue_ids = Venue.where("lower(city) = ?", city.downcase).map(&:id)
         Concert.where(venue_id: venue_ids, artist: artist_id)
       elsif artist != ""
-        artist_id = Artist.where(name: artist).map(&:id)
+        artist_id = Artist.where("lower(name) = ?", artist.downcase).map(&:id)
         Concert.where(artist_id: artist_id)
       elsif city != ""
-        venue_ids = Venue.where(city: city).map(&:id)
+        venue_ids = Venue.where("lower(city) = ?", city.downcase).map(&:id)
         Concert.where(venue_id: venue_ids)
       else
         Concert.all

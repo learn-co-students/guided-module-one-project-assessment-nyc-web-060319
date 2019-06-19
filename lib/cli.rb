@@ -46,7 +46,9 @@ class CommandLineInterface
     else
       puts "Enter a valid password."
       new_password = gets.chomp
-      User.create(username: new_username, password: new_password)
+      new_user = User.create(username: new_username, password: new_password)
+      @current_user = new_user
+      show_options
     end
   end
 
@@ -99,9 +101,29 @@ class CommandLineInterface
 
   def list_concerts
     puts ""
-    @current_user.concerts.each do |concert|
-      puts concert.to_string
+    my_concerts = @current_user.concerts
+    if my_concerts.empty?
+      puts "You have no concerts saved; please add some concerts to your list and try again."
+      show_options
+    else
       puts ""
+      @current_user.concerts.each do |concert|
+        puts concert.to_string
+        puts ""
+      end
+      puts "Would you like to remove a concert from your list?"
+      puts "1. Remove a concert."
+      puts "2. Return to main menu."
+      input = gets.chomp
+      case input
+      when "1"
+        delete_concert
+      when "2"
+        show_options
+      else
+        puts "Invalid input. Try again."
+        list_concerts
+      end
     end
   end
 
@@ -116,8 +138,27 @@ class CommandLineInterface
     when "2"
       show_options
     else
-      puts "Invalid input."
+      puts "Invalid input. Try again."
       empty_return
+    end
+  end
+
+  def delete_concert
+    my_concerts = @current_user.concerts
+    my_concerts.each_with_index do |concert, i|
+      puts "#{i + 1}: #{concert.to_string}"
+      puts ""
+    end
+    puts "Please enter the number of the concert you would like to remove from your list."
+    delete_num = gets.chomp.to_i - 1
+    if delete_num < 0 || delete_num >= my_concerts.length
+      puts "Invalid input. Try again."
+      delete_concert
+    else
+      to_delete = UserConcert.find_by(user_id: @current_user.id, concert_id: my_concerts[delete_num].id)
+      to_delete.destroy
+      @current_user = User.find(@current_user.id)
+      list_concerts
     end
   end
 end
