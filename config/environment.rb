@@ -1,9 +1,13 @@
 require 'bundler'
 Bundler.require
 
+require 'sinatra/activerecord/rake'
+
 
 Dir[File.join(File.dirname(__FILE__), "../app/models", "*.rb")].each {|f| require f}
 Dir[File.join(File.dirname(__FILE__), "../lib/support", "*.rb")].each {|f| require f}
+
+ENV["CHATBOT_ENV"] ||= "development"
 
 # binding.pry
 DBRegistry[ENV["CHATBOT_ENV"]].connect!

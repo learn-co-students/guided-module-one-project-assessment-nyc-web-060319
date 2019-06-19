@@ -7,4 +7,4 @@ def main
     runner.run()
 end
 
-# main
+main

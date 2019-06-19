@@ -5,7 +5,7 @@ class Speaker
     include Interactor
 
     def talk_to_user
-        puts "\nWhat say you?"
+        puts "\nWhat say you?\n"
         # Rake brakes bare gets, must explicitly use STDIN.gets
         user_text = STDIN.gets.chomp.downcase
         # binding.pry
