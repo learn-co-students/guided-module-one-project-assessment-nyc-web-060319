@@ -44,10 +44,11 @@ class CommandLineInterface
     if user == nil
       puts "Invalid username or password."
       sleep(1)
-      login_to_account
+      puts ""
+      login_or_create_account
     else
-      puts "Welcome #{username}."
       @current_user = user
+      puts "\nWelcome, #{@current_user.username}"
       show_options
     end
   end
@@ -56,7 +57,10 @@ class CommandLineInterface
     puts "Enter a username for the new account."
     puts ""
     new_username = gets.chomp
-    if User.find_by(username: new_username) != nil
+    if new_username == ""
+      puts "Please enter a non-blank username."
+      create_new_account
+    elsif User.find_by(username: new_username) != nil
       puts "This username is already taken, please enter another."
       create_new_account
     else
@@ -65,15 +69,16 @@ class CommandLineInterface
       new_password = gets.chomp
       new_user = User.create(username: new_username, password: new_password)
       @current_user = new_user
+      puts "Welcome, #{@current_user.username}"
       show_options
     end
   end
 
   def show_options
-    # puts "1. Find artists."
-    # puts "3. Find venues."
+    puts ""
     puts "1. Find new concerts to add to your personal list."
     puts "2. Show the concerts in your list."
+    puts "3. Exit the program."
     puts ""
     input = gets.chomp
     case input
@@ -81,6 +86,8 @@ class CommandLineInterface
       find_concert
     when "2"
       list_concerts
+    when "3"
+      return
     else
       puts "Invalid input, please try again."
       puts ""
@@ -88,15 +95,10 @@ class CommandLineInterface
     end
   end
 
-  def find_concert
-    puts "1. Enter a date (mm/dd/yy) for your concerts (or leave blank to search for concerts on all dates)."
-    puts ""
+  def input_date
     concert_date = ""
     loop do
       concert_date = gets.chomp
-      if concert_date == ""
-        break
-      end
       begin
         Date.strptime(concert_date, "%m/%d/%y")
       rescue ArgumentError
@@ -105,26 +107,17 @@ class CommandLineInterface
         break
       end
     end
+    concert_date
+  end
 
-    puts "2. Enter a city for your concerts (or leave blank to search for concerts in all cities)."
-    puts ""
-    concert_city = gets.chomp
-    puts "3. Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
-    puts ""
-    concert_artist = gets.chomp
-    puts "\nHere are your concerts:\n"
-    concert_list = Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist)
-    if concert_list.empty?
-      empty_return
-      return
-    end
-    concert_list = concert_list.sort_by do |concert|
-      concert.artist.name.downcase
-    end
+  def print_found_concerts(concert_list)
     concert_list.each_with_index do |concert, i|
       puts "#{i + 1}: #{concert.to_string}"
       puts ""
     end
+  end
+
+  def pick_concert_to_add(concert_list)
     num = 0
     loop do
       puts "Enter the number of the concert you would like to add to your list."
@@ -136,20 +129,79 @@ class CommandLineInterface
         break
       end
     end
-    UserConcert.create(user_id: @current_user.id, concert_id: concert_list[num].id)
+    poss_dups = UserConcert.where(user_id: @current_user.id, concert_id: concert_list[num].id)
+    if poss_dups.size > 0
+      puts "That concert is already in your list. Taking you back to the selection screen"
+      find_concert
+    else
+      UserConcert.create(user_id: @current_user.id, concert_id: concert_list[num].id)
+      choose_to_view_list
+    end
+  end
+
+  def choose_to_view_list
     puts "\nWould you like to view your list of concerts?"
     puts "1. View list."
     puts "2. Exit."
     puts ""
     input = gets.chomp
-    if input == "1"
+    case input
+    when "1"
       list_concerts
+    when "2"
+      return
+    else
+      puts "invalid input"
+      choose_to_view_list
+    end
+  end
+
+  def find_concert
+    puts "1. Enter a date (mm/dd/yy) for your concerts (or leave blank to search for concerts on all dates)."
+    puts ""
+    concert_date = input_date
+
+    puts "2. Enter a city for your concerts (or leave blank to search for concerts in all cities)."
+    puts ""
+    concert_city = gets.chomp
+    puts "3. Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
+    puts ""
+    concert_artist = gets.chomp
+    concert_list = Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist)
+    if concert_list.empty?
+      empty_return
+      return
+    end
+
+    concert_list = concert_list.sort_by do |concert|
+      concert.artist.name.downcase
+    end
+
+    puts "\nHere are your concerts:\n"
+    print_found_concerts(concert_list)
+    decision_to_add(concert_list)
+  end
+
+  def decision_to_add(concert_list)
+    puts "Would you like to add one of these concerts to your list?"
+    puts "1. Yes."
+    puts "2. No."
+    yes_or_no = gets.chomp
+    case yes_or_no
+    when "1"
+      pick_concert_to_add(concert_list)
+    when "2"
+      show_options
+    else
+      puts "Invalid input."
+      decision_to_add(concert_list)
     end
   end
 
   def list_concerts
-    puts ""
     my_concerts = @current_user.concerts
+    @current_user = User.find(@current_user.id)
+    puts ""
     if my_concerts.empty?
       puts "You have no concerts saved; please add some concerts to your list and try again."
       show_options
@@ -194,6 +246,7 @@ class CommandLineInterface
   end
 
   def delete_concert
+    @current_user = User.find(@current_user.id)
     my_concerts = @current_user.concerts
     my_concerts.each_with_index do |concert, i|
       puts "#{i + 1}: #{concert.to_string}"
