@@ -82,7 +82,6 @@ class CommandLineInterface
       menu.choice "Show the concerts in your list.", "2"
       menu.choice "Exit the program.", "3"
     end
-
     case input
     when "1"
       find_concert
@@ -114,31 +113,24 @@ class CommandLineInterface
     concert_date
   end
 
-  def print_found_concerts(concert_list)
-    concert_list.each_with_index do |concert, i|
-      puts "#{i + 1}: #{concert.to_string}".green
-      puts ""
-    end
-  end
-
-  def pick_concert_to_add(concert_list)
-    num = 0
-    loop do
-      puts "Enter the number of the concert you would like to add to your list."
-      puts ""
-      num = gets.chomp.to_i - 1
-      if num < 0 || num >= concert_list.length
-        puts "Invalid input. Try again."
-      else
-        break
+  def print_and_select_found_concerts(concert_list)
+    puts ""
+    prompt = TTY::Prompt.new
+    input = prompt.select("Choose a concert to add to your list.", per_page: 1) do |menu|
+      concert_list.each_with_index do |concert, i|
+        menu.choice concert.to_string, i
       end
     end
-    poss_dups = UserConcert.where(user_id: @current_user.id, concert_id: concert_list[num].id)
+    pick_concert_to_add(input, concert_list)
+  end
+
+  def pick_concert_to_add(input_num, concert_list)
+    poss_dups = UserConcert.where(user_id: @current_user.id, concert_id: concert_list[input_num].id)
     if poss_dups.size > 0
       puts "That concert is already in your list. Taking you back to the selection screen".red
       find_concert
     else
-      UserConcert.create(user_id: @current_user.id, concert_id: concert_list[num].id)
+      UserConcert.create(user_id: @current_user.id, concert_id: concert_list[input_num].id)
       choose_to_view_list
     end
   end
@@ -182,8 +174,7 @@ class CommandLineInterface
     end
 
     puts "\nHere are your concerts:\n"
-    print_found_concerts(concert_list)
-    decision_to_add(concert_list)
+    print_and_select_found_concerts(concert_list)
   end
 
   def decision_to_add(concert_list)
@@ -266,7 +257,7 @@ class CommandLineInterface
       to_delete = UserConcert.find_by(user_id: @current_user.id, concert_id: my_concerts[delete_num].id)
       to_delete.destroy
       @current_user = User.find(@current_user.id)
-      puts "Here is your updated concert list."
+      puts "Here is your updated concert list:"
       list_concerts
     end
   end
