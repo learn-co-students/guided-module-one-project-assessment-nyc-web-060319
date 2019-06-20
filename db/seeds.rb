@@ -32,7 +32,7 @@ A_STRINGS = [
 	"Sounds like a great idea",
 	"I am great thanks",
 	"Nothing much what are you up to",
-	"call 732-789-1728",
+	"call 1-213-373-4253",
 	"Really is this the best we can do?",
 	"Good evening thank you for calling flatiron how may I direct your call today?",
 	"Burn the building",

@@ -18,7 +18,7 @@ end
 def validate(response)
     # binding.pry
     if !response.start_with?(*(COMMANDS_SHORT.values))
-        puts "invalid command"
+        puts "Invalid command. Try again\n".red
         query_user
     end
 end
@@ -40,7 +40,7 @@ def query_user
     elsif response.start_with?(COMMANDS_SHORT[:delete])
         return :delete
     elsif response.start_with?(COMMANDS_SHORT[:quit])
-        puts "buh bye!"
+        puts "buh bye!".red
         exit
     elsif response.start_with?(COMMANDS_SHORT[:translate])
         return :translate
@@ -74,11 +74,12 @@ class Runner
         supported_languages = Translator::get_languages
         puts "Supported language codes:"
         supported_languages.each do |language|
-            puts language.code
+            # print doesn't add a new line.
+            print "#{language.code}, "
         end
-        puts "NONE to disable"
+        print "NONE to disable\n".red
         user_response_text = STDIN.gets.chomp.downcase
-        if user_response_text == "NONE"
+        if user_response_text == "none"
             @@translator_target_language = ""
         else
             found_response_code = supported_languages.find{|language| language.code == user_response_text}

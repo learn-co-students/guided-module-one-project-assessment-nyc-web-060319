@@ -24,7 +24,11 @@ class Speaker
         answer = user_q.response
         if answer != nil
             # binding.pry
-            answer = @translator.translate_text(user_q.response.answer)
+            if (@translator != nil)
+                answer = @translator.translate_text(user_q.response.answer)
+            else
+                answer = answer.answer
+            end
             # binding.pry
             puts answer
         else
