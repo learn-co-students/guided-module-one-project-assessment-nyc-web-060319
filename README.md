@@ -46,13 +46,11 @@ Be sure to include the relationships between your models. The [Rails Guides Acti
 
 
 #### Stretch Goals
-* Use a `gem` to jazz up the look of our app with [ASCII text](https://github.com/miketierney/artii) or [colors](https://rubygems.org/gems/colorize/versions/0.8.1).
+* Use a `gem` to jazz up the look of our app with [ASCII text](https://github.com/miketierney/artii)
 
 #### Robustness
 
 While it's nice that we can use our app while following the [happy path](https://en.wikipedia.org/wiki/Happy_path), users aren't always so nice. Another opportunity for improvement would be to handle bad input or errors in a user friendly manner.
-
-Find a way for your app to not break if a user inputs unexpected data. For example a restaurant name in ALL CAPS, or if their cat walks over the keyboard and enters "sfudihdsuifhsidu."
 
 Can you think of any other scenarios? How would you gracefully handle such scenarios?
 

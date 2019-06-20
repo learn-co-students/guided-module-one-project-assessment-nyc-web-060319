@@ -23,6 +23,27 @@ def validate(response)
     end
 end
 
+def translate_config
+    supported_languages = Translator::get_languages
+    puts "Supported language codes:"
+    supported_languages.each do |language|
+        # print doesn't add a new line.
+        print "#{language.code}, "
+    end
+    print "NONE to disable\n".red
+    user_response_text = STDIN.gets.chomp.downcase
+    if user_response_text == "none"
+        return ""
+    end
+    found_response_code = supported_languages.find{|language| language.code == user_response_text}
+    if found_response_code == nil
+        puts "Invalid language code. Ignoring request to translate.".red
+        return ""
+    end
+    return found_response_code.code
+end
+
+
 
 COMMANDS_SHORT = {learn: "l", speak: "s", quit: "q", update: "u", delete: "d", translate: "t" }
 
@@ -70,23 +91,6 @@ class Runner
         delete.run
     end
 
-    def translate_config
-        supported_languages = Translator::get_languages
-        puts "Supported language codes:"
-        supported_languages.each do |language|
-            # print doesn't add a new line.
-            print "#{language.code}, "
-        end
-        print "NONE to disable\n".red
-        user_response_text = STDIN.gets.chomp.downcase
-        if user_response_text == "none"
-            @@translator_target_language = ""
-        else
-            found_response_code = supported_languages.find{|language| language.code == user_response_text}
-            @@translator_target_language = found_response_code.code
-        end
-        # binding.pry
-    end
 
     def dispatch(command)
         # binding.pry
@@ -99,7 +103,7 @@ class Runner
         elsif command == :delete
             deleter
         elsif command == :translate
-            translate_config
+            @@translator_target_language = translate_config
         else
             # shouldn't reach
             abort
