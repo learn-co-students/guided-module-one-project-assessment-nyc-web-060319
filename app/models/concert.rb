@@ -4,21 +4,24 @@ class Concert < ActiveRecord::Base
   has_many :user_concerts
   has_many :users, through: :user_concerts
 
-  def self.our_select(date: date_string, city: city_string, artist: artist_string)
-    if date != ""
-      date = Date.strptime(date, "%m/%d/%y")
+  def self.our_select(date1: begin_date_string, date2: end_date_string, city: city_string, artist: artist_string)
+    if date1 != ""
+      begin_date = Date.strptime(date1, "%m/%d/%y")
+      end_date = Date.strptime(date2, "%m/%d/%y")
+      date_range = begin_date..end_date
+
       if city != "" && artist != ""
         artist_id = Artist.where("lower(name) = ?", artist.downcase).map(&:id)
         venue_ids = Venue.where("lower(city) = ?", city.downcase).map(&:id)
-        return Concert.where(date: date, venue_id: venue_ids, artist: artist_id)
+        return Concert.where(date: date_range, venue_id: venue_ids, artist: artist_id)
       elsif artist != ""
         artist_id = Artist.where("lower(name) = ?", artist.downcase).map(&:id)
-        return Concert.where(date: date, artist_id: artist_id)
+        return Concert.where(date: date_range, artist_id: artist_id)
       elsif city != ""
         venue_ids = Venue.where("lower(city) = ?", city.downcase).map(&:id)
-        return Concert.where(date: date, venue_id: venue_ids)
+        return Concert.where(date: date_range, venue_id: venue_ids)
       else
-        return Concert.where(date: date)
+        return Concert.where(date: date_range)
       end
     else
       if city != "" && artist != ""

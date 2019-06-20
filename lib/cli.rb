@@ -3,11 +3,12 @@ class CommandLineInterface
 
   def greet
     puts "\nHello, welcome to your friendly concert viewer!".light_blue
+    puts AsciiArt.guitar
   end
 
   def login_or_create_account
     prompt = TTY::Prompt.new
-    input = prompt.select("Choose an option") do |menu|
+    input = prompt.select("Choose an option.") do |menu|
       menu.choice "Login to existing account.", "1"
       menu.choice "Create new account.", "2"
       menu.choice "See a list of all existing usernames.", "3"
@@ -96,18 +97,22 @@ class CommandLineInterface
     end
   end
 
-  def input_date
+  def input_date(num)
     concert_date = ""
     loop do
       concert_date = gets.chomp
-      break if concert_date == ""
-
-      begin
-        Date.strptime(concert_date, "%m/%d/%y")
-      rescue ArgumentError
-        puts "Invalid date. Enter a date in the format (mm/dd/yy) \n".red
-      else
+      if num == 2 && concert_date == ""
+        puts "Cannot leave the end of the date range blank."
+      elsif concert_date == ""
         break
+      else
+        begin
+          Date.strptime(concert_date, "%m/%d/%y")
+        rescue ArgumentError
+          puts "Invalid date. Enter a date in the format (mm/dd/yy) \n".red
+        else
+          break
+        end
       end
     end
     concert_date
@@ -136,11 +141,12 @@ class CommandLineInterface
   end
 
   def choose_to_view_list
-    puts "\nWould you like to view your list of concerts?"
-    puts "1. View list."
-    puts "2. Exit.".red
+    prompt = TTY::Prompt.new
+    input = prompt.select("Would you like to view your list of concerts?") do |menu|
+      menu.choice "View list.", "1"
+      menu.choice "Exit.".red, "2"
+    end
     puts ""
-    input = gets.chomp
     case input
     when "1"
       list_concerts
@@ -153,24 +159,29 @@ class CommandLineInterface
   end
 
   def find_concert
-    puts "1. Enter a date (mm/dd/yy) for your concerts (or leave blank to search for concerts on all dates)."
+    puts "Enter the start date (mm/dd/yy) of the date range for your concerts (or leave blank to search for concerts on all dates)."
     puts ""
-    concert_date = input_date
-
-    puts "2. Enter a city for your concerts (or leave blank to search for concerts in all cities)."
+    begin_concert_date = input_date(1)
+    end_concert_date = ""
+    if begin_concert_date != ""
+      puts "Enter the end date (mm/dd/yy) of the date range for your concerts."
+      puts ""
+      end_concert_date = input_date(2)
+    end
+    puts "Enter a city for your concerts (or leave blank to search for concerts in all cities)."
     puts ""
     concert_city = gets.chomp
-    puts "3. Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
+    puts "Enter an artist for your concerts (or leave blank to search for concerts by all artists)."
     puts ""
     concert_artist = gets.chomp
-    concert_list = Concert.our_select(date: concert_date, city: concert_city, artist: concert_artist)
+    concert_list = Concert.our_select(date1: begin_concert_date, date2: end_concert_date, city: concert_city, artist: concert_artist)
     if concert_list.empty?
       empty_return
       return
     end
 
     concert_list = concert_list.sort_by do |concert|
-      concert.artist.name.downcase
+      [concert.date, concert.artist.name]
     end
 
     puts "\nHere are your concerts:\n"
@@ -178,10 +189,11 @@ class CommandLineInterface
   end
 
   def decision_to_add(concert_list)
-    puts "Would you like to add one of these concerts to your list?"
-    puts "1. Yes."
-    puts "2. No."
-    yes_or_no = gets.chomp
+    prompt = TTY::Prompt.new
+    yes_or_no = prompt.select("Would you like to add one of these concerts to your list?") do |menu|
+      menu.choice "Yes.", "1"
+      menu.choice "No.".red, "2"
+    end
     case yes_or_no
     when "1"
       pick_concert_to_add(concert_list)
@@ -194,23 +206,25 @@ class CommandLineInterface
   end
 
   def list_concerts
-    my_concerts = @current_user.concerts
     @current_user = User.find(@current_user.id)
+    my_concerts = @current_user.concerts.sort_by do |concert|
+      [concert.date, concert.artist.name]
+    end
     puts ""
     if my_concerts.empty?
       puts "You have no concerts saved; please add some concerts to your list and try again.".red
       show_options
     else
       puts ""
-      @current_user.concerts.each do |concert|
+      my_concerts.each do |concert|
         puts concert.to_string
         puts ""
       end
-      puts "Would you like to remove a concert from your list?"
-      puts "1. Remove a concert."
-      puts "2. Return to main menu."
-      puts ""
-      input = gets.chomp
+      prompt = TTY::Prompt.new
+      input = prompt.select("Would you like to remove a concert from your list?") do |menu|
+        menu.choice "Remove a concert.", "1"
+        menu.choice "Return to main menu.", "2"
+      end
       case input
       when "1"
         delete_concert
@@ -224,11 +238,11 @@ class CommandLineInterface
   end
 
   def empty_return
-    puts "Your search did not match any concerts in the database. Try again?".red
-    puts "1. Restart search."
-    puts "2. Return to main menu."
-    puts ""
-    input = gets.chomp
+    prompt = TTY::Prompt.new
+    input = prompt.select("Your search did not match any concerts in the database. Try again?") do |menu|
+      menu.choice "Restart search.", "1"
+      menu.choice "Return to main menu.", "2"
+    end
     case input
     when "1"
       find_concert
@@ -241,24 +255,21 @@ class CommandLineInterface
   end
 
   def delete_concert
-    @current_user = User.find(@current_user.id)
-    my_concerts = @current_user.concerts
-    my_concerts.each_with_index do |concert, i|
-      puts "#{i + 1}: #{concert.to_string}"
-      puts ""
-    end
-    puts "Please enter the number of the concert you would like to remove from your list."
     puts ""
-    delete_num = gets.chomp.to_i - 1
-    if delete_num < 0 || delete_num >= my_concerts.length
-      puts "Invalid input. Try again.".red
-      delete_concert
-    else
-      to_delete = UserConcert.find_by(user_id: @current_user.id, concert_id: my_concerts[delete_num].id)
-      to_delete.destroy
-      @current_user = User.find(@current_user.id)
-      puts "Here is your updated concert list:"
-      list_concerts
+    @current_user = User.find(@current_user.id)
+    my_concerts = @current_user.concerts.sort_by do |concert|
+      [concert.date, concert.artist.name]
     end
+    prompt = TTY::Prompt.new
+    delete_num = prompt.select("Choose a concert to delete from your list.", per_page: 1) do |menu|
+      my_concerts.each_with_index do |concert, i|
+        menu.choice concert.to_string, i
+      end
+    end
+    to_delete = UserConcert.find_by(user_id: @current_user.id, concert_id: my_concerts[delete_num].id)
+    to_delete.destroy
+    @current_user = User.find(@current_user.id)
+    puts "Here is your updated concert list:"
+    list_concerts
   end
 end
