@@ -6,38 +6,8 @@ Module One Final Project
 
 ## Goals (Minimum Requirements)
 
----
-
-## Project Overview (Timeline)
-
-### Phase 1: The Setup
-
-This should take approximately **half a day**.
-
-
-#### Planning
-
-
-Your **second goal** should be to decide on your [user stories](https://en.wikipedia.org/wiki/User_story). You **must have a minimum of four user stories corresponding to the four CRUD actions** to help explain how a user will interact with your app. A user story should follow the general structure of `"As a <role>, I want <goal/desire> so that <benefit>."`.
-
-For example, if we were creating an app to review restaurants on Yelp, we might write:
-
-* As a user, I want to enter a location and be given a random nearby restaurant suggestion. (**Read**)
-* As a user, I want to be able to write a review for a restaurant. (**Create**)
-* As a user, I want to enter a restaurant and be given user reviews of that restaurant. (**Read**)
-* As a user, I should be able to edit my restaurant review. (**Update**)
-* As a user, I want to be able to delete one of my restaurant reviews. (**Delete**)
-
 
 #### Setup
-
-Fork and clone this project repository. As you work, be sure to create a flow of:
-
-* creating a branch to work on a new feature,
-* committing and pushing to your branch,
-* and merging it to `master` when finished.
-* Then delete your old branch after successfully merging to `master`.
-* Rinse and repeat.
 
 Before you start building, take a look at the files you have available in this repo.
 
