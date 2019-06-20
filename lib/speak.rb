@@ -8,7 +8,7 @@ class Speaker
         @translation_enabled = enable_translation
         @translator_target_language = translator_target_language
         if @translation_enabled
-            @translator = Translator.new(translator_target_language)
+            @translator = Translator.new(@translation_enabled, translator_target_language)
         else
             @translator = nil
         end
@@ -19,11 +19,12 @@ class Speaker
         # Rake brakes bare gets, must explicitly use STDIN.gets
         user_text = STDIN.gets.chomp.downcase
         # binding.pry
+        # user_text = @translator.translate_text(user_text)
         user_q = Question.find_or_create_by(question: user_text)
         answer = user_q.response
         if answer != nil
             # binding.pry
-            answer = (@translation_enabled && @translator.translate_text(user_q.response))
+            answer = @translator.translate_text(user_q.response.answer)
             # binding.pry
             puts answer
         else
