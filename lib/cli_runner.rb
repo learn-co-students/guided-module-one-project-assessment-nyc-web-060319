@@ -52,7 +52,7 @@ class Runner
     end
 
     def speaker
-        speak = Speaker.new
+        speak = Speaker.new(enable_translation: true)
         speak.run
     end
     

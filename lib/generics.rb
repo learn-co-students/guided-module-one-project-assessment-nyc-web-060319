@@ -1,5 +1,8 @@
+require_relative "cloud/google_translate_api.rb"
 
 module Interactor
+    attr_accessor :translation_enabled
+    attr_accessor :translator
     def run
         begin
             puts "Beginning interactive loop mode..."
@@ -15,5 +18,12 @@ module Interactor
         while(true) do
             talk_to_user
         end
+    end
+
+    def translate_if_configured(text)
+        if @translation_enabled
+            return @translator.translate_text(text)
+        end
+        text
     end
 end

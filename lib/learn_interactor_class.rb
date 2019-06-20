@@ -3,6 +3,10 @@
 require_relative "generics.rb"
 
 class Learner
+    def initialize(enable_translation = false)
+        @translation_enabled = enable_translation
+    end
+
     include Interactor
     def talk_to_user
         puts "Question text:"

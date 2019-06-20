@@ -39,11 +39,12 @@ A_STRINGS = [
 	"We are all happy people",
 	"The red pill was a mistake he should have taken the blue....",
 	"I feel like chicken tonight, like chicken tonight",
-	"Another thing to do when done"
+    "Another thing to do when done",
+    "end of list, yo"
 ]
 
-8.times do |i|
-    q = Question.find_or_create_by(:question => Q_STRINGS[i])
-    a = Answer.find_or_create_by(:answer => "`#{A_STRINGS[i]}`? Ok, go on...")
+13.times do |i|
+    q = Question.find_or_create_by(:question => Q_STRINGS[i].downcase)
+    a = Answer.find_or_create_by(:answer => A_STRINGS[i].downcase)
     QuestionAnswer.find_or_create_by(:answer => a, :question => q)
 end

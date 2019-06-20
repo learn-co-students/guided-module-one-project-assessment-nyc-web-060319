@@ -2,6 +2,10 @@ require_relative "generics.rb"
 
 class Updater
     include Interactor
+    def initialize(enable_translation = false)
+        @translation_enabled = enable_translation
+    end
+
     def talk_to_user
         puts "what question do you want to update the answer for?"
         # Rake brakes bare gets, must explicitly use STDIN.gets
