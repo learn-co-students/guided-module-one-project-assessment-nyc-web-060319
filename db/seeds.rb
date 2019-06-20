@@ -22,7 +22,7 @@ Q_STRINGS = [
     "what's your name",#all after this point
     "whats your favorite color?",
     "What happens when an elephant sees a kanagroo?",
-    "When teachers are goen do we A) Burn the building? B) Burn the building? C) Burning the building?",
+    "When teachers are gone, what should we do?",
     "Red or blue you choose",
     "Seed data for a seed"
 ]
@@ -35,7 +35,7 @@ A_STRINGS = [
 	"call 1-213-373-4253",
 	"Really is this the best we can do?",
 	"Good evening thank you for calling flatiron how may I direct your call today?",
-	"Burn the building",
+	"Have a party!",
 	"We are all happy people",
 	"The red pill was a mistake he should have taken the blue....",
 	"I feel like chicken tonight, like chicken tonight",
