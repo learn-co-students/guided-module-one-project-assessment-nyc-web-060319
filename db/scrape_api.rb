@@ -33,7 +33,7 @@ url_9 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationNam
 url_10 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=36&apikey=#{api_key}"
 url_11 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=40&apikey=#{api_key}"
 url_12 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=44&apikey=#{api_key}"
-url_13 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=48&apikey=#{api_key}"
+url = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=345&page=48&apikey=#{api_key}"
 
 4.times do
   response_string = RestClient.get(url)

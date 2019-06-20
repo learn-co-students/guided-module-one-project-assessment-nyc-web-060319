@@ -2,15 +2,16 @@ class CommandLineInterface
   attr_accessor :current_user
 
   def greet
-    "Hello, welcome to your friendly concert viewer!"
+    puts "\nHello, welcome to your friendly concert viewer!".light_blue
   end
 
   def login_or_create_account
-    puts "1. Login to existing account."
-    puts "2. Create new account."
-    puts "3. See a list of all existing usernames."
-    puts ""
-    input = gets.chomp
+    prompt = TTY::Prompt.new
+    input = prompt.select("Choose an option") do |menu|
+      menu.choice "Login to existing account.", "1"
+      menu.choice "Create new account.", "2"
+      menu.choice "See a list of all existing usernames.", "3"
+    end
     case input
     when "1"
       login_to_account
@@ -19,7 +20,7 @@ class CommandLineInterface
     when "3"
       display_users
     else
-      puts "Please enter a valid input."
+      puts "Please enter a valid input.".red
       login_or_create_account
     end
   end
@@ -42,13 +43,13 @@ class CommandLineInterface
     password = gets.chomp
     user = User.find_by(username: username, password: password)
     if user == nil
-      puts "Invalid username or password."
+      puts "Invalid username or password.".red
       sleep(1)
       puts ""
       login_or_create_account
     else
       @current_user = user
-      puts "\nWelcome, #{@current_user.username}"
+      puts "\nWelcome, #{@current_user.username}!".green
       show_options
     end
   end
@@ -58,13 +59,13 @@ class CommandLineInterface
     puts ""
     new_username = gets.chomp
     if new_username == ""
-      puts "Please enter a non-blank username."
+      puts "Please enter a non-blank username.".red
       create_new_account
     elsif User.find_by(username: new_username) != nil
-      puts "This username is already taken, please enter another."
+      puts "This username is already taken, please enter another.".red
       create_new_account
     else
-      puts "Enter a valid password."
+      puts "Enter a password."
       puts ""
       new_password = gets.chomp
       new_user = User.create(username: new_username, password: new_password)
@@ -75,12 +76,13 @@ class CommandLineInterface
   end
 
   def show_options
-    puts ""
-    puts "1. Find new concerts to add to your personal list."
-    puts "2. Show the concerts in your list."
-    puts "3. Exit the program."
-    puts ""
-    input = gets.chomp
+    prompt = TTY::Prompt.new
+    input = prompt.select("Choose an option") do |menu|
+      menu.choice "Find new concerts to add to your personal list.", "1"
+      menu.choice "Show the concerts in your list.", "2"
+      menu.choice "Exit the program.", "3"
+    end
+
     case input
     when "1"
       find_concert
@@ -89,7 +91,7 @@ class CommandLineInterface
     when "3"
       return
     else
-      puts "Invalid input, please try again."
+      puts "Invalid input, please try again.".red
       puts ""
       show_options
     end
@@ -99,10 +101,12 @@ class CommandLineInterface
     concert_date = ""
     loop do
       concert_date = gets.chomp
+      break if concert_date == ""
+
       begin
         Date.strptime(concert_date, "%m/%d/%y")
       rescue ArgumentError
-        puts "Invalid date. Enter a date in the format (mm/dd/yy) \n"
+        puts "Invalid date. Enter a date in the format (mm/dd/yy) \n".red
       else
         break
       end
@@ -112,7 +116,7 @@ class CommandLineInterface
 
   def print_found_concerts(concert_list)
     concert_list.each_with_index do |concert, i|
-      puts "#{i + 1}: #{concert.to_string}"
+      puts "#{i + 1}: #{concert.to_string}".green
       puts ""
     end
   end
@@ -131,7 +135,7 @@ class CommandLineInterface
     end
     poss_dups = UserConcert.where(user_id: @current_user.id, concert_id: concert_list[num].id)
     if poss_dups.size > 0
-      puts "That concert is already in your list. Taking you back to the selection screen"
+      puts "That concert is already in your list. Taking you back to the selection screen".red
       find_concert
     else
       UserConcert.create(user_id: @current_user.id, concert_id: concert_list[num].id)
@@ -142,7 +146,7 @@ class CommandLineInterface
   def choose_to_view_list
     puts "\nWould you like to view your list of concerts?"
     puts "1. View list."
-    puts "2. Exit."
+    puts "2. Exit.".red
     puts ""
     input = gets.chomp
     case input
@@ -151,7 +155,7 @@ class CommandLineInterface
     when "2"
       return
     else
-      puts "invalid input"
+      puts "Invalid input.".red
       choose_to_view_list
     end
   end
@@ -203,7 +207,7 @@ class CommandLineInterface
     @current_user = User.find(@current_user.id)
     puts ""
     if my_concerts.empty?
-      puts "You have no concerts saved; please add some concerts to your list and try again."
+      puts "You have no concerts saved; please add some concerts to your list and try again.".red
       show_options
     else
       puts ""
@@ -222,16 +226,16 @@ class CommandLineInterface
       when "2"
         show_options
       else
-        puts "Invalid input. Try again."
+        puts "Invalid input. Try again.".red
         list_concerts
       end
     end
   end
 
   def empty_return
-    puts "Your search did not match any concerts in the database. Try again?"
+    puts "Your search did not match any concerts in the database. Try again?".red
     puts "1. Restart search."
-    puts "2. Return to main menu"
+    puts "2. Return to main menu."
     puts ""
     input = gets.chomp
     case input
@@ -240,7 +244,7 @@ class CommandLineInterface
     when "2"
       show_options
     else
-      puts "Invalid input. Try again."
+      puts "Invalid input. Try again.".red
       empty_return
     end
   end
@@ -256,13 +260,13 @@ class CommandLineInterface
     puts ""
     delete_num = gets.chomp.to_i - 1
     if delete_num < 0 || delete_num >= my_concerts.length
-      puts "Invalid input. Try again."
+      puts "Invalid input. Try again.".red
       delete_concert
     else
       to_delete = UserConcert.find_by(user_id: @current_user.id, concert_id: my_concerts[delete_num].id)
       to_delete.destroy
       @current_user = User.find(@current_user.id)
-      puts "Here is your updated concert list"
+      puts "Here is your updated concert list."
       list_concerts
     end
   end
