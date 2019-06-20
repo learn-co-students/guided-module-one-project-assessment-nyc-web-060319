@@ -81,7 +81,7 @@ class CommandLineInterface
     input = prompt.select("Choose an option") do |menu|
       menu.choice "Find new concerts to add to your personal list.", "1"
       menu.choice "Show the concerts in your list.", "2"
-      menu.choice "Exit the program.", "3"
+      menu.choice "Exit.".red, "3"
     end
     case input
     when "1"
@@ -89,7 +89,7 @@ class CommandLineInterface
     when "2"
       list_concerts
     when "3"
-      return
+      exit(0)
     else
       puts "Invalid input, please try again.".red
       puts ""
@@ -123,8 +123,12 @@ class CommandLineInterface
     prompt = TTY::Prompt.new
     input = prompt.select("Choose a concert to add to your list.", per_page: 1) do |menu|
       concert_list.each_with_index do |concert, i|
-        menu.choice concert.to_string, i
+        menu.choice "Entry #{i + 1}/#{concert_list.length}\n#{concert.to_string}", i
       end
+      menu.choice "Nope, don't like any of these. Take me back to the main menu.", -1
+    end
+    if input < 0
+      show_options
     end
     pick_concert_to_add(input, concert_list)
   end
@@ -132,7 +136,7 @@ class CommandLineInterface
   def pick_concert_to_add(input_num, concert_list)
     poss_dups = UserConcert.where(user_id: @current_user.id, concert_id: concert_list[input_num].id)
     if poss_dups.size > 0
-      puts "That concert is already in your list. Taking you back to the selection screen".red
+      puts "That concert is already in your list. Taking you back to the selection screen.".red
       find_concert
     else
       UserConcert.create(user_id: @current_user.id, concert_id: concert_list[input_num].id)
@@ -142,16 +146,19 @@ class CommandLineInterface
 
   def choose_to_view_list
     prompt = TTY::Prompt.new
-    input = prompt.select("Would you like to view your list of concerts?") do |menu|
-      menu.choice "View list.", "1"
-      menu.choice "Exit.".red, "2"
+    input = prompt.select("Would you like to view your list of concert or make another selection?") do |menu|
+      menu.choice "Make another selection.", "1"
+      menu.choice "View list.", "2"
+      menu.choice "Exit.".red, "3"
     end
     puts ""
     case input
     when "1"
-      list_concerts
+      find_concert
     when "2"
-      return
+      list_concerts
+    when "3"
+      exit(0)
     else
       puts "Invalid input.".red
       choose_to_view_list
@@ -263,7 +270,7 @@ class CommandLineInterface
     prompt = TTY::Prompt.new
     delete_num = prompt.select("Choose a concert to delete from your list.", per_page: 1) do |menu|
       my_concerts.each_with_index do |concert, i|
-        menu.choice concert.to_string, i
+        menu.choice "Entry #{i + 1}/#{my_concerts.length}\n#{concert.to_string}", i
       end
     end
     to_delete = UserConcert.find_by(user_id: @current_user.id, concert_id: my_concerts[delete_num].id)
