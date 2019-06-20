@@ -1,5 +1,6 @@
 require_relative "learn_interactor_class.rb"
 require_relative "speak.rb"
+require_relative "cloud/google_translate_api.rb"
 
 def instructions
     puts <<-HELP
@@ -10,6 +11,7 @@ Whats up? Enter a command:
 \t(q)uit
 \t(u)pdate
 \t(d)elete
+\tenable (t)ranslation
 HELP
 end
 
@@ -22,7 +24,7 @@ def validate(response)
 end
 
 
-COMMANDS_SHORT = {learn: "l", speak: "s", quit: "q", update: "u", delete: "d"}
+COMMANDS_SHORT = {learn: "l", speak: "s", quit: "q", update: "u", delete: "d", translate: "t" }
 
 def query_user
     instructions
@@ -40,19 +42,21 @@ def query_user
     elsif response.start_with?(COMMANDS_SHORT[:quit])
         puts "buh bye!"
         exit
+    elsif response.start_with?(COMMANDS_SHORT[:translate])
+        return :translate
     end
 end
 
 
 class Runner
- 
+    @@translator_target_language = ""
     def learner
         learn = Learner.new
         learn.run
     end
 
     def speaker
-        speak = Speaker.new(enable_translation: true)
+        speak = Speaker.new(enable_translation: @@translator_target_language != "", translator_target_language: @@translator_target_language)
         speak.run
     end
     
@@ -66,6 +70,23 @@ class Runner
         delete.run
     end
 
+    def translate_config
+        supported_languages = Translator::get_languages
+        puts "Supported language codes:"
+        supported_languages.each do |language|
+            puts language.code
+        end
+        puts "NONE to disable"
+        user_response_text = STDIN.gets.chomp.downcase
+        if user_response_text == "NONE"
+            @@translator_target_language = ""
+        else
+            found_response_code = supported_languages.find{|language| language.code == user_response_text}
+            @@translator_target_language = found_response_code.code
+        end
+        # binding.pry
+    end
+
     def dispatch(command)
         # binding.pry
         if command == :learn
@@ -76,6 +97,8 @@ class Runner
             updater
         elsif command == :delete
             deleter
+        elsif command == :translate
+            translate_config
         else
             # shouldn't reach
             abort

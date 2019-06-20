@@ -4,10 +4,13 @@ require_relative "generics.rb"
 class Speaker
     include Interactor
 
-    def initialize(enable_translation = false)
+    def initialize(enable_translation: false, translator_target_language: nil)
         @translation_enabled = enable_translation
+        @translator_target_language = translator_target_language
         if @translation_enabled
-            @translator = Translator.new("fr")
+            @translator = Translator.new(translator_target_language)
+        else
+            @translator = nil
         end
     end
 

@@ -17,4 +17,9 @@ class Translator
         # binding.pry
         translated = (@translate.translate text_to_translate.answer, to: @target_language).text
     end
+
+    def self.get_languages
+        temp_translate = Google::Cloud::Translate.new project: @@project_id
+        temp_translate.languages
+    end
 end
